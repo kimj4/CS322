@@ -56,17 +56,17 @@ def runInstagramTest(regexString, inputFile):
 
 
 def main():
-    test1 = '@[a-zA-Z0-9_]{1,15}'
-    test2 = '^(?!.*(A|a)+(D|d)+(M|m)+(I|i)+(N|n)+)^(?!.*(T|t)+(W|w)+(I|i)+(T|t)+(T|t)+(E|e)+(R|r)+)@[a-zA-Z0-9_]{1,15}'
-    test3 = '^(?!.+@.*)^(?!.*[%$()\^\-~\.\*\!\?\#\&"].*)^(?!.*(A|a)+(D|d)+(M|m)+(I|i)+(N|n)+)^(?!.*(T|t)+(W|w)+(I|i)+(T|t)+(T|t)+(E|e)+(R|r)+)@[a-zA-Z0-9_]{1,15}'
+    twitterRegex1 = '@[a-zA-Z0-9_]{1,15}'
+    twitterRegex2 = '^(?!.*(A|a)+(D|d)+(M|m)+(I|i)+(N|n)+)^(?!.*(T|t)+(W|w)+(I|i)+(T|t)+(T|t)+(E|e)+(R|r)+)@[a-zA-Z0-9_]{1,15}'
+    twitterRegex3 = '^(?!.+@.*)^(?!.*[%$()\^\-~\.\*\!\?\#\&"].*)^(?!.*(A|a)+(D|d)+(M|m)+(I|i)+(N|n)+)^(?!.*(T|t)+(W|w)+(I|i)+(T|t)+(T|t)+(E|e)+(R|r)+)@[a-zA-Z0-9_]{1,15}'
     testDivider = '~~~~~~~~~~~~~~~~~~'
 
     print(testDivider)
-    runTwitterTest(test1, 'Assignment1_InputFile.txt')
+    runTwitterTest(twitterRegex1, 'Assignment1_InputFile.txt')
     print(testDivider)
-    runTwitterTest(test2, 'Assignment1_InputFile.txt')
+    runTwitterTest(twitterRegex2, 'Assignment1_InputFile.txt')
     print(testDivider)
-    runTwitterTest(test3, 'Assignment1_InputFile.txt')
+    runTwitterTest(twitterRegex3, 'Assignment1_InputFile.txt')
 
     instaRegex1 = '^(?!.+@.*)^(?!.*[%$()\^\-~\.\*\!\?\#\&"].*)^(?!.*(A|a)+(D|d)+(M|m)+(I|i)+(N|n)+)^(?!.*(T|t)+(W|w)+(I|i)+(T|t)+(T|t)+(E|e)+(R|r)+)@[a-zA-Z0-9_]{1,30}'
     instaRegex2 = '^(?!.+@.*)^(?!.*[%$()\^\-~\*\!\?\#\&"].*)@[a-zA-Z0-9_\.]{1,30}'

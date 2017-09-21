@@ -1,0 +1,7 @@
+Twitter handle guide
+- up to 15 characters
+- alphanumeric + underscore [a-zA-Z-]
+'Twitter' and 'Admin' not allowed
+
+
+^(?!.+@.*)^(?!.*[%$()\^\-~\*\!\?\#\&"].*)@[a-zA-Z0-9_\.]{1,30}

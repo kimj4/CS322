@@ -1,12 +1,25 @@
+'''
+    assignment1.py
+    Carleton College
+    CS 332 Natural Language Processing
+    Ju Yun Kim, Emma Posega Rappleye
+
+    Runs a couple tests on the test data for finding Instagram and Twitter
+    handles. Prints to the terminal metrics and confusion matrices
+
+    Confusion matrices are printed by prettyGraph.py. Go to that file for
+    instructions on usage.
+'''
+
 import re
 import prettyGraph
 
-# precision = # correct / # found
-# recall = # found / # total
-# F1 = (2 * precision * recall) / (precision + recall)
-
-
 def runTwitterTest(regexString, inputFile):
+    '''
+    Searches for matches in each line using a regex made for Twitter handles.
+    Prints precision, recall, F1
+    Prints the confusion matrix
+    '''
     fd = open(inputFile, 'r', encoding='UTF-8')
     total = 0
     falsePositive = 0
@@ -19,45 +32,34 @@ def runTwitterTest(regexString, inputFile):
             if ('T' in line.split(',')[1]):
                 total += 1
                 truePositive +=1
-                # print('correct')
             else:
                 falsePositive += 1
-                # print('incorrect')
         else:
             if ('T' in line.split(',')[1]):
                 total += 1
                 falseNegative +=1
-                # print('correct')
             else:
                 trueNegative += 1
-                # print('incorrect')
 
     precision = truePositive / (truePositive + falsePositive)
     recall = (truePositive + falsePositive) / total
-    # print('true positive: ' + str(truePositive))
-    # print('true negative: ' + str(trueNegative))
-    # print('false positive: ' + str(falsePositive))
-    # print('false negative: ' + str(falseNegative))
-    # prettyPrintGraph(numRows, numCols, topLabels, leftLabels, data):
+
     prettyGraph.prettyPrintGraph(2, 2, ['Predicted Yes', 'Predicted No'],
                                        ['Actual Yes', 'Actual No'],
                                        [[truePositive, falseNegative],
                                         [falsePositive, trueNegative]])
-    # print('Precision: ' + str(precision))
-    # print('Recall: ' + str(recall))
-    # print('F1: ' + str((2 * precision * recall) / (precision + recall)))
-    # print('Confusion matrix')
-    # print('               --------------------------------')
-    # print('               | Predicted yes | Predicted no |')
-    # print('-----------------------------------------------')
-    # print('   Actual yes  |      %s       |       %s      |' % (truePositive, falseNegative))
-    # print('-----------------------------------------------')
-    # print('   Actual no   |      %s       |       %s      |' % (falsePositive, trueNegative))
-    # print('-----------------------------------------------')
 
+    print('Precision: ' + str(precision))
+    print('Recall: ' + str(recall))
+    print('F1: ' + str((2 * precision * recall) / (precision + recall)))
 
 
 def runInstagramTest(regexString, inputFile):
+    '''
+    Searches for matches in each line using a regex made for Instagram handles.
+    Prints precision, recall, F1
+    Prints the confusion matrix
+    '''
     fd = open(inputFile, 'r', encoding='UTF-8')
     total = 0
     falsePositive = 0
@@ -76,27 +78,28 @@ def runInstagramTest(regexString, inputFile):
             if ('I' in line.split(',')[1]):
                 total += 1
                 falseNegative +=1
-                # print('correct')
             else:
                 trueNegative += 1
-                # print('incorrect')
 
     precision = truePositive / (truePositive + falsePositive)
     recall = (truePositive + falsePositive) / total
-    # print('true positive: ' + str(truePositive))
-    # print('true negative: ' + str(trueNegative))
-    # print('false positive: ' + str(falsePositive))
-    # print('false negative: ' + str(falseNegative))
 
-    # print('Precision: ' + str(precision))
-    # print('Recall: ' + str(recall))
-    # print('F1: ' + str((2 * precision * recall) / (precision + recall)))
     prettyGraph.prettyPrintGraph(2, 2, ['Predicted Yes', 'Predicted No'],
                                        ['Actual Yes', 'Actual No'],
                                        [[truePositive, falseNegative],
                                         [falsePositive, trueNegative]])
 
+    print('Precision: ' + str(precision))
+    print('Recall: ' + str(recall))
+    print('F1: ' + str((2 * precision * recall) / (precision + recall)))
+
+
 def runSystemTest(twitterRegex, instagramRegex, inputFile):
+    '''
+    Searches for matches in each line for both Twitter and Instagram handles.
+    Prints system-wide precision, recall, F1
+    Prints the system-wide confusion matrix
+    '''
     fd = open(inputFile, 'r', encoding='UTF-8')
     total = 0
     actualTwitterPredictedTwitter = 0
@@ -117,20 +120,25 @@ def runSystemTest(twitterRegex, instagramRegex, inputFile):
     twitterTotal = 0
     instaTotal = 0
     neitherTotal = 0
+    addedToTotal = False
     for line in fd:
+        total += 1
         if ('T' in line.split(',')[1]):
             isTwitter = True;
             twitterTotal += 1
+            addedToTotal = True
         if ('I' in line.split(',')[1]):
             isInsta = True
             instaTotal += 1
         if ('N' in line.split(',')[1]):
             neitherTotal += 1
 
-        ######################
-        ### twitter processing
-        ######################
+        addedToTotal = False
 
+
+        ########################################################################
+        ### twitter processing##################################################
+        ########################################################################
         twitterRegReturn = re.search(twitterRegex, line)
         # twitter regex matches
         if (twitterRegReturn):
@@ -147,9 +155,9 @@ def runSystemTest(twitterRegex, instagramRegex, inputFile):
             a = ''
             # not sure if we have to do anything here
 
-        ########################
-        ### instagram processing
-        ########################
+        ########################################################################
+        ### instagram processing################################################
+        ########################################################################
         instaRegReturn = re.search(instagramRegex, line)
         # I regex matches
         if (instaRegReturn):
@@ -182,31 +190,46 @@ def runSystemTest(twitterRegex, instagramRegex, inputFile):
         isTwitter = False
         isInsta = False
 
+
     prettyGraph.prettyPrintGraph(3, 3, ['Predicted Twitter', 'Predicted Instagram', 'Predicted Neither'],
                                        ['Actual Twitter', 'Actual Instagram', 'Actual Neither'],
                                        [[actualTwitterPredictedTwitter, actualTwitterPredictedInsta, actualTwitterPredictedNeither],
                                         [actualInstaPredictedTwitter, actualInstaPredictedInsta, actualInstaPredictedNeither],
                                         [actualNeitherPredictedTwitter, actualNeitherPredictedInsta, actualNeitherPredictedNeither]])
 
+    precision = (actualTwitterPredictedTwitter + actualInstaPredictedInsta) /\
+                (actualTwitterPredictedTwitter + actualTwitterPredictedInsta +
+                 actualInstaPredictedInsta + actualInstaPredictedTwitter +
+                 actualNeitherPredictedInsta + actualNeitherPredictedTwitter)
+
+    recall = (actualTwitterPredictedTwitter + actualTwitterPredictedInsta +
+              actualInstaPredictedInsta + actualInstaPredictedTwitter +
+              actualNeitherPredictedInsta + actualNeitherPredictedTwitter)\
+              / (twitterTotal + instaTotal)
+
+    F1 = (2*precision*recall) / (precision + recall)
+
+    print('Precision: ' + str(precision))
+    print('Recall: ' + str(recall))
+    print('F1: ' + str(F1))
+
+
+
 
 def main():
     twitterRegex1 = '@[a-zA-Z0-9_]{1,15}'
     twitterRegex2 = '^(?!.*(A|a)+(D|d)+(M|m)+(I|i)+(N|n)+)^(?!.*(T|t)+(W|w)+(I|i)+(T|t)+(T|t)+(E|e)+(R|r)+)@[a-zA-Z0-9_]{1,15}'
     twitterRegex3 = '^(?!.+@.*)^(?!.*[%$()\^\-~\.\*\!\?\#\&"].*)^(?!.*(A|a)+(D|d)+(M|m)+(I|i)+(N|n)+)^(?!.*(T|t)+(W|w)+(I|i)+(T|t)+(T|t)+(E|e)+(R|r)+)@[a-zA-Z0-9_]{1,15}'
-    testDivider = '~~~~~~~~~~~~~~~~~~'
 
-    print('\n`````````````Twitter```````````````')
+    print('`````````````Twitter```````````````')
     runTwitterTest(twitterRegex1, 'Assignment1_InputFile.txt')
-    # print(testDivider)
     runTwitterTest(twitterRegex2, 'Assignment1_InputFile.txt')
-    # print(testDivider)
     runTwitterTest(twitterRegex3, 'Assignment1_InputFile.txt')
 
     instaRegex1 = '^(?!.+@.*)^(?!.*[%$()\^\-~\.\*\!\?\#\&"].*)^(?!.*(A|a)+(D|d)+(M|m)+(I|i)+(N|n)+)^(?!.*(T|t)+(W|w)+(I|i)+(T|t)+(T|t)+(E|e)+(R|r)+)@[a-zA-Z0-9_]{1,30}'
     instaRegex2 = '^(?!.+@.*)^(?!.*[%$()\^\-~\*\!\?\#\&"].*)@[a-zA-Z0-9_\.]{1,30}'
     print('````````````Instagram``````````````')
     runInstagramTest(instaRegex1, 'Assignment1_InputFile.txt')
-    # print(testDivider)
     runInstagramTest(instaRegex2, 'Assignment1_InputFile.txt')
 
     runSystemTest(twitterRegex1, instaRegex1, 'Assignment1_InputFile.txt')

@@ -5,10 +5,18 @@ as well as usernames with disallowed sequences like "admin". It also allowed
 usernames with over 15 characters--it just stopped matching for allowed characters
 after 15 characters.
 
+Precision: 0.6458333333333334
+Recall: 1.5483870967741935
+F1: 0.9114854517611025
+
 '^(?!.*(A|a)+(D|d)+(M|m)+(I|i)+(N|n)+)^(?!.*(T|t)+(W|w)+(I|i)+(T|t)+(T|t)+(E|e)+(R|r)+)@[a-zA-Z0-9_]{1,15}'
 Here, we improved our original regex by rejecting strings with disallowed sequences like
 "admin" and "twitter". We made sure to include both lowercase and uppercase versions of
 each letter in this regex.
+
+Precision: 0.7560975609756098
+Recall: 1.3225806451612903
+F1: 0.9621498864496594
 
 '^(?!.+@.*)^(?!.*[%$()\^\-~\.\*\!\?\#\&"].*)^(?!.*(A|a)+(D|d)+(M|m)+(I|i)+(N|n)+)^(?!.*(T|t)+(W|w)+(I|i)+(T|t)+(T|t)+(E|e)+(R|r)+)@[a-zA-Z0-9_]{1,15}'
 Here we also got rid of disallowed symbols. This isn't as robust as it could be--
@@ -16,13 +24,42 @@ we didn't include many special symbols (like ¿§«»ω⊙¤) in our disallowed 
 We also never fixed the regex so that it would only allow >=15 characters, a problem
 that persisted since our first run.
 
+Precision: 1.0
+Recall: 1.0
+F1: 1.0
+
 '^(?!.+@.*)^(?!.*[%$()\^\-~\.\*\!\?\#\&"].*)^(?!.*(A|a)+(D|d)+(M|m)+(I|i)+(N|n)+)^(?!.*(T|t)+(W|w)+(I|i)+(T|t)+(T|t)+(E|e)+(R|r)+)@[a-zA-Z0-9_]{1,30}'
 Here we used our Twitter regex but changed the length so that it would look at the
 first 30 characters in the line. This runs into the same problem of allowing longer
 sequences without disallowed characters
+
+Precision: 1.0
+Recall: 0.775
+F1: 0.8732394366197184
 
 '^(?!.+@.*)^(?!.*[%$()\^\-~\*\!\?\#\&"].*)@[a-zA-Z0-9_\.]{1,30}'
 Instagram handles allow the words 'admin' and 'twitter' in their handles as
 well as some special symbols, so those filters were excluded. This led to a
 perfect score on the particular test data. The length problem from above was
 still not addressed.
+
+Precision: 1.0
+Recall: 1.0
+F1: 1.0
+
+
+Overall system metrics
+Twitter Regex 1 + Instagram Regex 1
+Precision: 0.7848101265822784
+Recall: 1.1126760563380282
+F1: 0.9204171756083811
+
+Twitter Regex 2 + Instagram Regex 2
+Precision: 0.8765432098765432
+Recall: 1.1408450704225352
+F1: 0.9913807964144112
+
+Twitter Regex 3 + Instagram Regex 2
+Precision: 1.0
+Recall: 1.0
+F1: 1.0

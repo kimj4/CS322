@@ -9,21 +9,88 @@ nltk.download('punkt')
 # tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
 
 def dataSplit(trainingRatio, sentences):
+    ''' splits up the data into training and test sets where trainingRatio
+        is some proportion '''
+    # make a copy so that the original sentences is not changed
+    testSet = copy.deepcopy(sentences)
     trainingSet = []
-    testSet = []
     numTrainingSentences = round(len(sentences) * trainingRatio)
     for i in range(0, numTrainingSentences):
-        randSentence = random.choice(sentences)
+        # select a random sentence, pop it from the testSet, push it on the trainingSet
+        randSentence = random.choice(testSet)
         trainingSet.append(randSentence)
-        sentences.remove(randSentence)
-    testSet = copy.deepcopy(sentences)
+        testSet.remove(randSentence)
     return (trainingSet, testSet)
 
-def createNgram(N, trainingSet, testSet):
+def prod(lst, excludeSmallNumbers):
+    smallNums = 0
+    p = 1
+    for item in lst:
+        if excludeSmallNumbers:
+            if item <= 0.000001:
+                smallNums += 1
+            else:
+                p *= item
+        else:
+            p *= item
+
+    if excludeSmallNumbers:
+        print('there were ' + str(smallNums) + ' small numbers')
+    return p
 
 
 
+def calculatePerplexity(N, trainingAndTestSets):
+    ''' trainingAndTestSets: (list of training sentences, list of test setences)
+        Calculates the perplexity for a given data split and N '''
+    trainingGrams = createNgram(N, trainingAndTestSets[0])
+    trainingGramsTotal = sum(trainingGrams.values())
 
+    testGrams = createNgram(N, trainingAndTestSets[1])
+
+    probabilities = {}
+    for key, value in testGrams.items():
+        if (not key in trainingGrams.keys()):
+            # if the training set had no instance of this ngram
+            probabilities[key] = 0.000001
+        else:
+            probabilities[key] = (trainingGrams[key] / trainingGramsTotal) * value
+
+
+    # print(probabilities)
+    p = prod(probabilities.values(), True)
+    # print()
+    perplexity = (1.0 / p) ** (1.0 / N)
+    print(str(perplexity))
+
+
+
+def createNgram(N, sentences):
+    # TODO: check if we should be passing in sentences as cleaned up sequences of words
+    # sentences, testSet are lists of sentences
+
+    nGrams = {}
+
+    endOfGram = N - 1
+
+
+    for sentence in sentences:
+        if (N > 1):
+            sentence = ('<s> ' * (N - 1)) + sentence + ' </s>'
+            # print(sentence)
+        sentenceList = sentence.split(' ')
+        while endOfGram < (len(sentenceList)):
+            s = ' '
+            curNgram = sentenceList[endOfGram - N + 1: endOfGram + 1]
+            curNgram = s.join(curNgram)
+            if (curNgram in nGrams):
+                nGrams[curNgram] += 1
+            else:
+                nGrams[curNgram] = 1
+            endOfGram += 1
+        endOfGram = N - 1
+
+    return nGrams
 
 def main():
     punkt_param = PunktParameters()
@@ -55,19 +122,27 @@ def main():
     print(numSentences)
     print(numWords)
     print(numUniqueWords)
-    pprint.pprint(wordDict)
+    # pprint.pprint(wordDict)
     # TODO: check if punctuations should be counted as words
     # TODO: check if all of these are words
     # TODO: make visualization for the word frequency
 
-    seventyThirty = dataSplit(.7, sentences)
-    eightyTwenty = dataSplit(.8, sentences)
-    ninetyTen = dataSplit(.9, sentences)
 
-    for i in range(1, 3):
-        createNgram(i, seventyThirty[0], seventyThirty[1])
-        createNgram(i, eightyTwenty[0], eightyTwenty[1])
-        createNgram(i, ninetyTen[0], ninetyTen[1])
+    # list containing n-gram models
+    # seventyThirtyGrams = []
+    # eightyTwentyGrams = []
+    # ninetyTenGrams = []
+    #
+    seventyThirty = dataSplit(.7, sentences)
+    # eightyTwenty = dataSplit(.8, sentences)
+    # ninetyTen = dataSplit(.9, sentences)
+    #
+    # for i in range(1, 4):
+    #     seventyThirtyGrams.append(createNgram(i, seventyThirty[0]))
+    #     eightyTwentyGrams.append(createNgram(i, eightyTwenty[0]))
+    #     ninetyTenGrams.append(createNgram(i, ninetyTen[0]))
+    calculatePerplexity(1, seventyThirty)
+
 
 
 

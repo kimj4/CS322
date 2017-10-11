@@ -10,10 +10,7 @@ import csv
 import operator
 import collections
 
-
-
 nltk.download('punkt')
-
 
 testSentences = ["Please return the television to Mr. Lynch on Sunday.",
 "Odysseus was 17 when he first had novocain.",
@@ -25,7 +22,6 @@ testSentences = ["Please return the television to Mr. Lynch on Sunday.",
 "That explanation is irrelevant to surrealists, existentialists and film snobs for purposes of interpretation, narrative form, humorous asides and soap.",
 "Sentence of your choosing.",
 "Another sentence of your choosing."]
-
 
 
 def dataSplit(trainingRatio, sentences):
@@ -109,46 +105,8 @@ def calculatePerplexity(N, trainingAndTestSets):
     # so calculate perplexity for each sentence
     for sentence in trainingAndTestSets[1]:
         sentencePerplexityList.append(calculateSentencePerplexity(N, sentence, gramDict, total1Grams))
-
-        # sentenceNgrams = createNgram(N, [sentence])
-        # sentenceProbability = 1
-        #
-        # for ngram, count in sentenceNgrams.items():
-        #     if (N == 1):
-        #         # unigram probability = this unigram count / all unigram count
-        #         ngramProbability = count / total1Grams
-        #     else:
-        #         # ngram probability = this ngram count / this n-1gram count
-        #         # make the n-1gram by popping off the last word in ngram
-        #         prevGram = ngram.split(' ')[:-1]
-        #         prevGram = ' '.join(prevGram)
-        #
-        #         prevGramCount = 0
-        #         if prevGram in gramDict[str(N - 1) + "gram"]:
-        #             prevGramCount = gramDict[str(N - 1) + "gram"][prevGram]
-        #         else:
-        #             # special case for handling something like <s> <s> I
-        #             #  just use the <s> count from unigrams
-        #             if prevGram.split(' ')[-1] == "<s>":
-        #                 prevGramCount = gramDict["1gram"]['<s>']
-        #
-        #         # if there's no prevGramCount, there will be no ngram count because
-        #         # that sequence of words never appears in the training set
-        #
-        #         if ngram in gramDict[str(N) + "gram"]:
-        #             trainingCount = gramDict[str(N) + "gram"][ngram]
-        #             ngramProbability = trainingCount / prevGramCount
-        #         else:
-        #             # arbitary small probability if the ngram is not in the training set
-        #             ngramProbability = 0.000001
-        #
-        #     sentenceProbability = Decimal(sentenceProbability * Decimal(ngramProbability))
-        #
-        # sentencePerplexity = (1 / sentenceProbability) ** Decimal(1 / N)
-        # sentencePerplexityList.append(sentencePerplexity)
     perplexity = sum(sentencePerplexityList) / len(sentencePerplexityList)
     return perplexity
-
 
 
 def createNgram(N, sentences):
@@ -168,7 +126,6 @@ def createNgram(N, sentences):
     for sentence in sentences:
         if (N > 1):
             sentence = ('<s> ' * (N - 1)) + sentence + ' </s>'
-            # print(sentence)
         else:
             sentence = '<s> ' + sentence + ' </s>'
         sentenceList = sentence.split(' ')
@@ -182,8 +139,32 @@ def createNgram(N, sentences):
                 nGrams[curNgram] = 1
             endOfGram += 1
         endOfGram = N - 1
-
     return nGrams
+
+def calculateMLE(sentence, N, trainingAndTestSets):
+    '''
+    calculates the minimum likelihood estimate on sample sentences for a model
+    trained on the training set in trainingAndTestSets
+
+    sentences -- sentence that needs the MLE
+    N -- the N in N-gram
+    trainingAndTestSets -- a tuple containing a division of the corpus
+    '''
+    # create the model on the training set
+    trainingNGrams = createNgram(N, trainingAndTestSets[0])
+
+    # get the count to get the probability
+    totalNGrams = sum(trainingNGrams.values())
+
+    sentenceMLE = 1;
+    testNGrams = createNgram(N, [sentence])
+    for key, value in testNGrams.items():
+        if key in trainingNGrams:
+            sentenceMLE = sentenceMLE * (trainingNGrams[key] / totalNGrams) * testNGrams[key]
+        else:
+            sentenceMLE = sentenceMLE * 0.000001
+    return sentenceMLE
+
 
 def writeToCSV(wordDict, filename):
     '''
@@ -247,6 +228,13 @@ def main():
     print('unigram perplexity for 90:10 split: %s' % calculatePerplexity(1, ninetyTen))
     print(' bigram perplexity for 90:10 split: %s' % calculatePerplexity(2, ninetyTen))
     print('trigram perplexity for 90:10 split: %s' % calculatePerplexity(3, ninetyTen))
+
+    for s in testSentences:
+        print(' ')
+        print(s)
+        print(calculateMLE(s, 3, ninetyTen))
+        print(' ')
+
 
 
 if __name__ == "__main__":

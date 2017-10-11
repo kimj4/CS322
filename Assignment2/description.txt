@@ -71,8 +71,9 @@ Part 4 (extra credit)
 Implement a smoothing technique to address zero values. Fully document your approach.
 
 
-
+==========
 Submission
+==========
 
 Submit the following via Moodle by 11:55 PM on Monday, October 9, 2017
     (submission will be open until Tuesday, October 10, 2017 by 11:55 PM for 50% credit):

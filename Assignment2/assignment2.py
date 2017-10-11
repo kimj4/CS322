@@ -5,6 +5,7 @@ from nltk.tokenize.punkt import PunktSentenceTokenizer, PunktParameters
 import pprint
 import random
 import copy
+from decimal import *
 nltk.download('punkt')
 # tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
 
@@ -39,15 +40,7 @@ def prod(lst, excludeSmallNumbers):
     return p
 
 
-
-def calculatePerplexity(N, trainingAndTestSets):
-    ''' trainingAndTestSets: (list of training sentences, list of test setences)
-        Calculates the perplexity for a given data split and N '''
-    trainingGrams = createNgram(N, trainingAndTestSets[0])
-    trainingGramsTotal = sum(trainingGrams.values())
-
-    testGrams = createNgram(N, trainingAndTestSets[1])
-
+def calculatePerplexityBySentence(N, testGrams, trainingGrams, trainingGramsTotal):
     probabilities = {}
     for key, value in testGrams.items():
         if (not key in trainingGrams.keys()):
@@ -58,10 +51,91 @@ def calculatePerplexity(N, trainingAndTestSets):
 
 
     # print(probabilities)
-    p = prod(probabilities.values(), True)
+    p = prod(probabilities.values(), False)
     # print()
     perplexity = (1.0 / p) ** (1.0 / N)
-    print(str(perplexity))
+    # print(str(perplexity))
+    return perplexity
+
+
+def calculatePerplexity(N, trainingAndTestSets):
+    ''' trainingAndTestSets: (list of training sentences, list of test setences)
+        Calculates the perplexity for a given data split and N '''
+
+    gramDict = {}
+
+    for i in range(1, N + 1):
+        trainingGrams = createNgram(i, trainingAndTestSets[0])
+        gramDict[str(i) + "gram"] = trainingGrams
+        # trainingGramsTotal = sum(trainingGrams.values())
+
+    sentencePerplexityList = []
+    # TODO iterate through 1 through N
+    for sentence in trainingAndTestSets[1]:
+        sentenceNgrams = createNgram(N, [sentence])
+        sentenceProbability = 1
+
+        print(sentence)
+        for ngram, count in sentenceNgrams.items():
+            # get count of preceding words in ngram
+            prevWords = ngram.split(' ')[0:N-1]
+            prevWords = ' '.join(prevWords)
+            # TODO change n to curval when you change the prev todo
+            prevWordsCount = 0
+            if prevWords in gramDict[str(N - 1) + "gram"]:
+                prevWordsCount = gramDict[str(N - 1) + "gram"][prevWords]
+            else:
+                if prevWords.split(' ')[-1] == "<s>":
+                    prevWordsCount = gramDict["1gram"]['<s>']
+                    # prevWords = ngram.split(' ')[1:N]
+                    # prevWords = ' '.join(prevWords)
+                    # prevWordsCount = gramDict[str(N - 1) + "gram"][prevWords]
+
+            # if there's no prevWordsCount, there will be no ngram count because
+            # that sequence of words never appears in the training set
+
+            print("~~~")
+
+            if ngram in gramDict[str(N) + "gram"]:
+                trainingCount = gramDict[str(N) + "gram"][ngram]
+                print('ngram found')
+                print(ngram)
+
+                ngramProbability = trainingCount / prevWordsCount
+            else:
+                # print(ngram)
+                ngramProbability = 0.000001
+
+            # print(str(ngramProbability))
+            # print(str(sentenceProbability))
+            sentenceProbability = Decimal(sentenceProbability * Decimal(ngramProbability))
+
+        sentencePerplexity = (1/sentenceProbability)**Decimal(1/N)
+        sentencePerplexityList.append(sentencePerplexity)
+        # testGrams = createNgram(N, sentence)
+        # sentencePerplexityList.append(calculatePerplexityBySentence(N, testGrams, trainingGrams, trainingGramsTotal))
+
+
+    perplexity = sum(sentencePerplexityList) / len(sentencePerplexityList)
+    print(perplexity)
+
+
+
+    #
+    # probabilities = {}
+    # for key, value in testGrams.items():
+    #     if (not key in trainingGrams.keys()):
+    #         # if the training set had no instance of this ngram
+    #         probabilities[key] = 0.000001
+    #     else:
+    #         probabilities[key] = (trainingGrams[key] / trainingGramsTotal) * value
+    #
+    #
+    # # print(probabilities)
+    # p = prod(probabilities.values(), True)
+    # # print()
+    # perplexity = (1.0 / p) ** (1.0 / N)
+    # print(str(perplexity))
 
 
 
@@ -78,6 +152,8 @@ def createNgram(N, sentences):
         if (N > 1):
             sentence = ('<s> ' * (N - 1)) + sentence + ' </s>'
             # print(sentence)
+        else:
+            sentence = '<s> ' + sentence + ' </s>'
         sentenceList = sentence.split(' ')
         while endOfGram < (len(sentenceList)):
             s = ' '
@@ -141,7 +217,7 @@ def main():
     #     seventyThirtyGrams.append(createNgram(i, seventyThirty[0]))
     #     eightyTwentyGrams.append(createNgram(i, eightyTwenty[0]))
     #     ninetyTenGrams.append(createNgram(i, ninetyTen[0]))
-    calculatePerplexity(1, seventyThirty)
+    calculatePerplexity(2, seventyThirty)
 
 
 

@@ -42,6 +42,50 @@ def dataSplit(trainingRatio, sentences):
         testSet.remove(randSentence)
     return (trainingSet, testSet)
 
+def calculateSentencePerplexity(N, sentence, gramDict, total1Grams):
+    '''
+    Calculates the perplexity for a single sentence
+
+    N -- the N in N-grams
+    sentence -- a string (which should be a sentence)
+    gramDict -- a dictionary containing the training n-grams counts
+    total1Grams -- number of unigrams for calculating perplexity with unigrams
+    '''
+    sentenceNgrams = createNgram(N, [sentence])
+    sentenceProbability = 1
+
+    for ngram, count in sentenceNgrams.items():
+        if (N == 1):
+            # unigram probability = this unigram count / all unigram count
+            ngramProbability = count / total1Grams
+        else:
+            # ngram probability = this ngram count / this n-1gram count
+            # make the n-1gram by popping off the last word in ngram
+            prevGram = ngram.split(' ')[:-1]
+            prevGram = ' '.join(prevGram)
+
+            prevGramCount = 0
+            if prevGram in gramDict[str(N - 1) + "gram"]:
+                prevGramCount = gramDict[str(N - 1) + "gram"][prevGram]
+            else:
+                # special case for handling something like <s> <s> I
+                #  just use the <s> count from unigrams
+                if prevGram.split(' ')[-1] == "<s>":
+                    prevGramCount = gramDict["1gram"]['<s>']
+
+            # if there's no prevGramCount, there will be no ngram count because
+            # that sequence of words never appears in the training set
+
+            if ngram in gramDict[str(N) + "gram"]:
+                trainingCount = gramDict[str(N) + "gram"][ngram]
+                ngramProbability = trainingCount / prevGramCount
+            else:
+                # arbitary small probability if the ngram is not in the training set
+                ngramProbability = 0.000001
+
+        sentenceProbability = Decimal(sentenceProbability * Decimal(ngramProbability))
+        sentencePerplexity = (1 / sentenceProbability) ** Decimal(1 / N)
+    return sentencePerplexity
 
 def calculatePerplexity(N, trainingAndTestSets):
     ''' trainingAndTestSets: (list of training sentences, list of test setences)
@@ -64,42 +108,44 @@ def calculatePerplexity(N, trainingAndTestSets):
     sentencePerplexityList = []
     # so calculate perplexity for each sentence
     for sentence in trainingAndTestSets[1]:
-        sentenceNgrams = createNgram(N, [sentence])
-        sentenceProbability = 1
+        sentencePerplexityList.append(calculateSentencePerplexity(N, sentence, gramDict, total1Grams))
 
-        for ngram, count in sentenceNgrams.items():
-            if (N == 1):
-                # unigram probability = this unigram count / all unigram count
-                ngramProbability = count / total1Grams
-            else:
-                # ngram probability = this ngram count / this n-1gram count
-                # make the n-1gram by popping off the last word in ngram
-                prevGram = ngram.split(' ')[:-1]
-                prevGram = ' '.join(prevGram)
-
-                prevGramCount = 0
-                if prevGram in gramDict[str(N - 1) + "gram"]:
-                    prevGramCount = gramDict[str(N - 1) + "gram"][prevGram]
-                else:
-                    # special case for handling something like <s> <s> I
-                    #  just use the <s> count from unigrams
-                    if prevGram.split(' ')[-1] == "<s>":
-                        prevGramCount = gramDict["1gram"]['<s>']
-
-                # if there's no prevGramCount, there will be no ngram count because
-                # that sequence of words never appears in the training set
-
-                if ngram in gramDict[str(N) + "gram"]:
-                    trainingCount = gramDict[str(N) + "gram"][ngram]
-                    ngramProbability = trainingCount / prevGramCount
-                else:
-                    # arbitary small probability if the ngram is not in the training set
-                    ngramProbability = 0.000001
-
-            sentenceProbability = Decimal(sentenceProbability * Decimal(ngramProbability))
-
-        sentencePerplexity = (1 / sentenceProbability) ** Decimal(1 / N)
-        sentencePerplexityList.append(sentencePerplexity)
+        # sentenceNgrams = createNgram(N, [sentence])
+        # sentenceProbability = 1
+        #
+        # for ngram, count in sentenceNgrams.items():
+        #     if (N == 1):
+        #         # unigram probability = this unigram count / all unigram count
+        #         ngramProbability = count / total1Grams
+        #     else:
+        #         # ngram probability = this ngram count / this n-1gram count
+        #         # make the n-1gram by popping off the last word in ngram
+        #         prevGram = ngram.split(' ')[:-1]
+        #         prevGram = ' '.join(prevGram)
+        #
+        #         prevGramCount = 0
+        #         if prevGram in gramDict[str(N - 1) + "gram"]:
+        #             prevGramCount = gramDict[str(N - 1) + "gram"][prevGram]
+        #         else:
+        #             # special case for handling something like <s> <s> I
+        #             #  just use the <s> count from unigrams
+        #             if prevGram.split(' ')[-1] == "<s>":
+        #                 prevGramCount = gramDict["1gram"]['<s>']
+        #
+        #         # if there's no prevGramCount, there will be no ngram count because
+        #         # that sequence of words never appears in the training set
+        #
+        #         if ngram in gramDict[str(N) + "gram"]:
+        #             trainingCount = gramDict[str(N) + "gram"][ngram]
+        #             ngramProbability = trainingCount / prevGramCount
+        #         else:
+        #             # arbitary small probability if the ngram is not in the training set
+        #             ngramProbability = 0.000001
+        #
+        #     sentenceProbability = Decimal(sentenceProbability * Decimal(ngramProbability))
+        #
+        # sentencePerplexity = (1 / sentenceProbability) ** Decimal(1 / N)
+        # sentencePerplexityList.append(sentencePerplexity)
     perplexity = sum(sentencePerplexityList) / len(sentencePerplexityList)
     return perplexity
 

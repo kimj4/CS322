@@ -1,4 +1,19 @@
-# copied from https://stackoverflow.com/questions/4576077/python-split-text-on-sentences
+'''
+Solution to assignment 2
+Splits up a corpus into training and test sets
+Trains on the trianing set using 1, 2, 3 -grams
+Tests the perplexity on those models with the test set
+allows user to get MLEs on input sentences
+
+Currently set up to take as imput HW2_InputFile_NoPunctuation.txt
+    (included in submission)
+
+At the end, there is an infinite loop for user input sentences. End with control+c
+
+Emma Posega Rappleye, Ju Yun Kim
+Carleton College
+CS 322: Natural Language Processing
+'''
 
 import nltk.data
 from nltk.tokenize.punkt import PunktSentenceTokenizer, PunktParameters
@@ -20,8 +35,8 @@ testSentences = ["Please return the television to Mr. Lynch on Sunday.",
 "She was wearing a leather jacket.",
 "I was born in 1976 and graduated high school in 1990.",
 "That explanation is irrelevant to surrealists, existentialists and film snobs for purposes of interpretation, narrative form, humorous asides and soap.",
-"Sentence of your choosing.",
-"Another sentence of your choosing."]
+"ummm, can they be unknowns is that acceptable umm in the description, does he say anything about handling unknowns?",
+"Theres his doppelgänger who eluded the Black Lodge by copying himself like a set of keys."]
 
 
 def dataSplit(trainingRatio, sentences):
@@ -80,7 +95,7 @@ def calculateSentencePerplexity(N, sentence, gramDict, total1Grams):
                 ngramProbability = 0.000001
 
         sentenceProbability = Decimal(sentenceProbability * Decimal(ngramProbability))
-        sentencePerplexity = (1 / sentenceProbability) ** Decimal(1 / N)
+        sentencePerplexity = (1 / sentenceProbability) ** Decimal(1 / (len(sentence)))
     return sentencePerplexity
 
 def calculatePerplexity(N, trainingAndTestSets):
@@ -153,17 +168,59 @@ def calculateMLE(sentence, N, trainingAndTestSets):
     # create the model on the training set
     trainingNGrams = createNgram(N, trainingAndTestSets[0])
 
+    # create the counts for n-1
+    trainingNMinusOneGrams = createNgram(N - 1, trainingAndTestSets[0])
+
+    oneGram = createNgram(1, trainingAndTestSets[0])
+    oneGramTotal = sum(oneGram.values())
+
+    probabilityDict = {}
+    for key, value in trainingNGrams.items():
+        prevGram = " ".join(key.split(' ')[:-1])
+        if  prevGram in trainingNMinusOneGrams:
+            probabilityDict[key] = trainingNGrams[key] / trainingNMinusOneGrams[prevGram]
+
+
     # get the count to get the probability
     totalNGrams = sum(trainingNGrams.values())
 
     sentenceMLE = 1;
     testNGrams = createNgram(N, [sentence])
     for key, value in testNGrams.items():
-        if key in trainingNGrams:
-            sentenceMLE = sentenceMLE * (trainingNGrams[key] / totalNGrams) * testNGrams[key]
+        if N > 1:
+            if key.split(' ')[-2] == '<s>':
+                sentenceMLE = sentenceMLE * (oneGram['<s>'] / oneGramTotal) * testNGrams[key]
+            elif key in probabilityDict.keys():
+                # print('n-gram found')
+                sentenceMLE = sentenceMLE * probabilityDict[key] * testNGrams[key]
+            else:
+                sentenceMLE = sentenceMLE * 0.000001
         else:
-            sentenceMLE = sentenceMLE * 0.000001
+            if key in probabilityDict.keys():
+                # print('n-gram found')
+                # print(str(probabilityDict[key]))
+                sentenceMLE = sentenceMLE * probabilityDict[key] * testNGrams[key]
+            else:
+                sentenceMLE = sentenceMLE * 0.000001
+
     return sentenceMLE
+
+def createNgramProbabilities(N, sentences):
+    '''
+    creates a dictionary stores the probability of an ngram in a given corpus
+    should be used for the training set
+    Form:
+    {'this is a 4-gram': 0.003423,
+     'this is another 4-gram': 0.000002340234}
+    '''
+
+    nGramCounts = createNgram(N, sentences)
+    nMinusOneGramCounts = createNgram(N - 1, sentences)
+
+
+
+    return
+
 
 
 def writeToCSV(wordDict, filename):
@@ -190,11 +247,19 @@ def main():
     data = fp.read()
     sentences = sentence_splitter.tokenize(data)
 
+
     numSentences = len(sentences)
     numWords = 0
     wordDict = {}
 
+    modifiedSentences = []
+
     for sentence in sentences:
+        # get rid of end-of-sentence punctuation so that they won't be
+        #  counted as words
+        sentence = sentence[:-1]
+        sentence = sentence.lower()
+        modifiedSentences.append(sentence)
         tokenized_text = nltk.word_tokenize(sentence)
         for word in tokenized_text:
             numWords += 1
@@ -203,8 +268,13 @@ def main():
             else:
                 wordDict[word] = 1
 
+    sentences = modifiedSentences
+
+
+
     numUniqueWords = len(wordDict)
-    writeToCSV(wordDict, 'wordFrequency.csv')
+    # writeToCSV(wordDict, 'wordFrequency.csv')
+    print(' ')
     print("number of sentences: %d" % numSentences)
     print("number of words: %d" % numWords)
     print("number of unique words: %d" % numUniqueWords)
@@ -215,6 +285,21 @@ def main():
     seventyThirty = dataSplit(.7, sentences)
     eightyTwenty = dataSplit(.8, sentences)
     ninetyTen = dataSplit(.9, sentences)
+
+    perplexityList = [
+        calculatePerplexity(1, seventyThirty),
+        calculatePerplexity(2, seventyThirty),
+        calculatePerplexity(3, seventyThirty),
+        calculatePerplexity(1, eightyTwenty),
+        calculatePerplexity(2, eightyTwenty),
+        calculatePerplexity(3, eightyTwenty),
+        calculatePerplexity(1, ninetyTen),
+        calculatePerplexity(2, ninetyTen),
+        calculatePerplexity(3, ninetyTen) ]
+
+    bestUnigramIdx = perplexityList.index(min([perplexityList[0], perplexityList[3], perplexityList[6]]))
+    bestBigramIdx = perplexityList.index(min([perplexityList[1], perplexityList[4], perplexityList[7]]))
+    bestTrigramIdx = perplexityList.index(min([perplexityList[2], perplexityList[5], perplexityList[8]]))
 
     print(' ')
     print('unigram perplexity for 70:30 split: %s' % calculatePerplexity(1, seventyThirty))
@@ -229,12 +314,50 @@ def main():
     print(' bigram perplexity for 90:10 split: %s' % calculatePerplexity(2, ninetyTen))
     print('trigram perplexity for 90:10 split: %s' % calculatePerplexity(3, ninetyTen))
 
+    bestUnigramSplit = ''
+    if bestUnigramIdx == 0:
+        bestUnigramSplit = seventyThirty
+    elif bestUnigramIdx == 3:
+        bestUnigramSplit = eightyTwenty
+    elif bestUnigramIdx == 6:
+        bestUnigramSplit = ninetyTen
+
+    bestBigramSplit = ''
+    if bestBigramIdx == 1:
+        bestBigramSplit = seventyThirty
+    elif bestBigramIdx == 4:
+        bestBigramSplit = eightyTwenty
+    elif bestBigramIdx == 7:
+        bestBigramSplit = ninetyTen
+
+    bestTrigramSplit = ''
+    if bestTrigramIdx == 2:
+        bestTrigramSplit = seventyThirty
+    elif bestTrigramIdx == 5:
+        bestTrigramSplit = eightyTwenty
+    elif bestTrigramIdx == 8:
+        bestTrigramSplit = ninetyTen
+
     for s in testSentences:
+        s = s[:-1]
+        s = s.lower()
+        s = s.replace(',', '')
         print(' ')
         print(s)
-        print(calculateMLE(s, 3, ninetyTen))
+        print('best unigram MLE: ' + str(calculateMLE(s, 1, bestUnigramSplit)))
+        print('best bigram MLE:  ' + str(calculateMLE(s, 2, bestBigramSplit)))
+        print('best trigram MLE: ' + str(calculateMLE(s, 3, bestTrigramSplit)))
         print(' ')
 
+        while(True):
+            inputSentence = input('Enter a new sentence: ')
+            if inputSentence[-1] not in '!?.':
+                inputSentence = inputSentence + '.'
+            print(' ')
+            print('best unigram MLE: ' + str(calculateMLE(inputSentence, 1, bestUnigramSplit)))
+            print('best bigram MLE:  ' + str(calculateMLE(inputSentence, 2, bestBigramSplit)))
+            print('best trigram MLE: ' + str(calculateMLE(inputSentence, 3, bestTrigramSplit)))
+            print(' ')
 
 
 if __name__ == "__main__":

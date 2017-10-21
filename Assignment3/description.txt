@@ -26,7 +26,7 @@ I can not tell if I am crying.
 I just spent 7 hours playing with fonts.
 
 
-Start with the part of speech tags and decide on an appropriate expansion or 
+Start with the part of speech tags and decide on an appropriate expansion or
 contraction (striving for the most parsimonious set of rules). Confirm that your
 grammar generates the original 12 sentences. I recommend that you use NLTK's POS
 tagger, CFG generate and ChartParser functionalities to assist you

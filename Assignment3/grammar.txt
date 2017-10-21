@@ -1,0 +1,42 @@
+[('I', 'PRP'), ('hate', 'VBP'), ('this', 'DT'), ('.', '.')]
+
+PRP --> I
+VBP --> hate
+DT  --> this
+DT --> the
+VBG --> Running
+VBZ --> is
+JJ --> terrible
+JJS --> worst
+. --> .
+NN --> Everything
+RB --> Sometimes
+
+
+
+
+[('Running', 'VBG'), ('is', 'VBZ'), ('terrible', 'JJ'), ('.', '.')]
+
+[('Everything', 'NN'), ('is', 'VBZ'), ('the', 'DT'), ('worst', 'JJS'), ('.', '.')]
+
+[('Sometimes', 'RB'), ('I', 'PRP'), ('feel', 'VBP'), ('like', 'IN'), ('I', 'PRP'), ('was', 'VBD'), ('born', 'VBN'), ('wi
+th', 'IN'), ('a', 'DT'), ('leak', 'NN'), ('.', '.')]
+
+[('Any', 'DT'), ('goodness', 'NN'), ('I', 'PRP'), ('started', 'VBD'), ('with', 'IN'), ('just', 'RB'), ('slowly', 'RB'),
+('spilled', 'VBN'), ('out', 'IN'), ('of', 'IN'), ('me', 'PRP'), ('.', '.')]
+
+[('Now', 'RB'), ('it', 'PRP'), ('is', 'VBZ'), ('all', 'DT'), ('gone', 'VBN'), ('.', '.')]
+
+[('You', 'PRP'), ('didn', 'VBP'), ('’', 'JJ'), ('t', 'NN'), ('know', 'VB'), ('me', 'PRP'), ('.', '.')]
+
+[('Then', 'RB'), ('you', 'PRP'), ('fell', 'VBD'), ('in', 'IN'), ('love', 'NN'), ('with', 'IN'), ('me', 'PRP'), ('.', '.'
+)]
+
+[('Now', 'RB'), ('you', 'PRP'), ('know', 'VBP'), ('me', 'PRP'), ('.', '.')]
+
+[('I', 'PRP'), ('need', 'VBP'), ('to', 'TO'), ('go', 'VB'), ('take', 'VB'), ('a', 'DT'), ('shower', 'NN'), ('.', '.')]
+
+[('I', 'PRP'), ('can', 'MD'), ('not', 'RB'), ('tell', 'VB'), ('if', 'IN'), ('I', 'PRP'), ('am', 'VBP'), ('crying', 'VBG'
+), ('.', '.')]
+
+[('I', 'PRP'), ('just', 'RB'), ('spent', 'VBD'), ('7', 'CD'), ('hours', 'NNS'), ('playing', 'VBG'), ('with', 'IN'), ('fonts', 'NNS'), ('.', '.')]

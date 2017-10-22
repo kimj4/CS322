@@ -1,0 +1,61 @@
+﻿S -> NP VP
+S -> PP S
+S -> RB NP VP
+S -> CC S
+S -> VP
+
+NP -> NN
+NP -> NNS
+NP -> PRP
+NP -> DT JJS
+NP -> NP SBAR
+NP -> CD NNS
+NP -> NP VP
+NP -> DT NN
+
+SBAR -> S
+SBAR -> CC S
+
+VP -> VP NP
+VP -> VP JJ
+VP -> Verb Preposition S
+VP -> Verb PP
+VP -> ADV ADV Verb PP
+VP -> VBZ PDT (“all”) VBN
+VP -> VBD RB VP
+VP -> VB PRP
+VP -> RB VBD NP
+VP -> VBG PP
+VP -> VBD PP PP
+VP -> VB NP .
+VP -> VBP S
+VP -> TO VP VP(VB VB NP) .
+VP -> MD RB VP
+VP -> VB SBAR
+VP -> VBP VP(VBG)
+
+
+
+PP -> Preposition NP
+PP -> Preposition Preposition NP (out of me)
+PP -> RB
+
+NN -> 'running' | 'everything' | 'leak' | 'goodness' | 'love' | 'shower'
+NNS -> 'hours' | 'fonts'
+VBG -> 'crying' | 'playing'
+VBZ -> 'is'
+VBD -> 'was' | 'started' | 'fell' | 'spent' | 'did'
+VBP -> 'know' | 'feel'| 'need' | 'am'
+VB -> 'know' | 'go' | 'take' | 'tell'
+VBN -> 'born' | 'spilled' | 'gone'
+JJ -> 'terrible'
+JJS -> 'worst'
+DT -> 'the' | 'a' | 'any' | 'all'
+IN -> 'with' | 'out' | 'of' | 'in'
+CC -> 'like' | 'if'
+MD -> 'can'
+PRP -> 'I' | 'me' | 'it' | 'you'
+RB -> 'not' | 'sometimes' | 'just' | 'slowly' | 'now' | 'then' | 'just'
+CD -> '7'
+TO -> 'to'
+

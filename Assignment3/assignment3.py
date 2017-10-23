@@ -271,9 +271,15 @@ def main():
 
     print(loweredSentences)
 
-    for sentence in generate(grammar, depth=5):
+    counter = 0
+    for sentence in generate(grammar, depth=10):
+        counter += 1
         if ' '.join(sentence) in loweredSentences:
             print(sentence)
+        if counter % 10000 == 0:
+            print(counter)
+
+
 
 
 

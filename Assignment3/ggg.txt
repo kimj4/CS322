@@ -1,0 +1,62 @@
+(SBARQ (SQ (NP (PRP I)) (VP (VB hate) (NP (DT this)))) (. .)) 
+(S (VP (VBG running) (VBZ is) (ADJP (JJ terrible))) (. .)) 
+(S (VP (VBG everything) (VBZ is) (ADJP (DT the) (JJS worst))) (. .)) 
+(NP+SBAR+S
+  (ADVP (RB sometimes))
+  (S (NP (PRP I)) (VP (VBP feel) (VB like) (NP (PRP I))))
+  (S
+    (VP (VBD was) (VBN born) (PP (IN with) (NP (DT a) (NN leak))))
+    (. .))) 
+(SBAR+S
+  (NP (DT any) (NN goodness))
+  (NP (PRP I))
+  (VP
+    (VBD started)
+    (SBAR
+      (IN with)
+      (S
+        (ADVP (RB just))
+        (ADVP (RB slowly))
+        (VP (VBN spilled) (PRT (RP out)) (PP (IN of) (NP (PRP me))))
+        (. .))))) 
+(S
+  (ADVP (RB now))
+  (NP (PRP it))
+  (VP (VBZ is) (NP (DT all) (NN gone)))
+  (. .)) 
+(SBARQ
+  (SQ (NP (PRP you)) (VP (VBD did) (RB not) (VB know) (NP (PRP me))))
+  (. .)) 
+(NP+SBAR+S
+  (ADVP (RB then))
+  (S (NP (PRP you)) (VP (VBD fell)))
+  (S
+    (VP (PP (IN in) (NP (NN love))) (PP (IN with) (NP (PRP me))))
+    (. .))) 
+(S (ADVP (RB now)) (NP (PRP you)) (VP (VB know) (NP (PRP me))) (. .)) 
+(SBARQ
+  (SQ
+    (NP (PRP I))
+    (VP
+      (VBP need)
+      (S+VP (TO to) (VP (VB go) (VB take) (NP (DT a) (NN shower))))))
+  (. .)) 
+(SBAR+S
+  (NP (PRP I))
+  (VP
+    (MD can)
+    (RB not)
+    (VB tell)
+    (SBAR
+      (IN if)
+      (S (NP (PRP I)) (VP (VBZ am) (VP (VBG crying))) (. .))))) 
+(SBARQ
+  (SQ
+    (NP (PRP I))
+    (VP
+      (ADVP (RB just))
+      (VBD spent)
+      (SBAR+S
+        (NP (CD 7) (NNS hours))
+        (VP (VBG playing) (PP (IN with) (NP (NN fonts)))))))
+  (. .)) 

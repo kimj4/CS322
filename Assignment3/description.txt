@@ -37,7 +37,8 @@ but these are not the only means.
 
 Part 2
 
-Using the following transduction lexicon (English:Spanish), generate word for word Spanish translations for the 12 sentence corpus.
+Using the following transduction lexicon (English:Spanish), generate word for
+word Spanish translations for the 12 sentence corpus.
 
 7:7
 this:esto

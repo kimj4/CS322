@@ -1,0 +1,90 @@
+NN → shower
+NN → gone
+NN → leak
+VB → like
+VBN → born
+VP → VBG VBZ ADJP
+NN → love
+VP → VBD SBAR
+NN → fonts
+S → NP VP
+PRP → me
+VP → VBZ NP
+VP → ADVP VBD SBAR+S
+ADJP → DT JJS
+NP+SBAR+S → ADVP S S
+VP → VBG PP
+RB → just
+MD → can
+VBP → feel
+DT → any
+SBAR+S → NP NP VP
+VBG → running
+NN → goodness
+NP → DT
+VBM → spilled
+VP → VBZ VP
+S → VP
+PRP → I
+SQ → NP VP
+VB → go
+NP → NN
+PRP → it
+DT → this
+VBD → was
+RB → slowly
+VP → VBM PRT PP
+SBAR → IN S
+VP → VB NP
+VBG → crying
+VB → know
+RB → sometimes
+VP → VBP VB NP
+VB → take
+VBD → spent
+ADJP → JJ
+RB → not
+VBG → everything
+VP → PP PP
+VP → VBD VBN PP
+RB → then
+VP → VB VB NP
+PRT → RP
+PRP → you
+NP → PRP
+NNS → hours
+VB → hate
+S → ADVP ADVP VP
+SBARQ → SQ
+SBAR+S → NP VP
+TO → to
+VBG → is
+VP → VBG
+DT → a
+VP → MD RB VB SBAR
+CD → 7
+JJS → worst
+IN → with
+RP → out
+DT → the
+IN → if
+VBZ → am
+VBG → playing
+VB → tell
+VBD → fell
+S → ADVP NP VP
+VBZ → is
+VP → VBP S+VP
+JJ → terrible
+NP → DT NN
+NP → CD NNS
+IN → in
+VBD → started
+RB → now
+IN → of
+DT → all
+VP → VBD
+PP → IN NP
+S+VP → TO VP
+ADVP → RB
+VBP → need

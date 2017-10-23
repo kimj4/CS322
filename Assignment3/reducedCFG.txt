@@ -1,0 +1,56 @@
+VP -> VBP VB NP
+VP -> VB NP
+PP -> IN NP
+VP -> ADVP VBD SBAR+S
+SBAR+S -> NP NP VP
+NP+SBAR+S -> ADVP S S
+SQ -> NP VP
+NP -> DT
+SBAR+S -> NP VP
+NP -> NN
+VP -> VBD SBAR
+NP -> PRP
+S -> ADVP ADVP VP
+NP -> DT NN
+S+VP -> TO VP
+S -> VP
+ADVP -> RB
+ADJP -> DT JJS
+PRT -> RP
+NP -> CD NNS
+VP -> VBZ NP
+VP -> MD RB VB SBAR
+VP -> VBG VBZ ADJP
+S -> NP VP
+VP -> VBD VBN PP
+S -> ADVP NP VP
+VP -> VBG
+VP -> VBD
+VP -> VBM PRT PP
+VP -> VBG PP
+VP -> VBZ VP
+SBARQ -> SQ
+VP -> VBP S+VP
+VP -> VB VB NP
+ADJP -> JJ
+SBAR -> IN S
+VP -> PP PP
+NNS -> 'hours' | 'fonts'
+DT -> 'this' | 'all' | 'a' | 'the' | 'any'
+RB -> 'slowly' | 'just' | 'not' | 'now' | 'sometimes' | 'then'
+PRP -> 'me' | 'I' | 'you' | 'it'
+VBD -> 'fell' | 'spent' | 'was' | 'started'
+VBP -> 'feel' | 'need'
+NN -> 'leak' | 'love' | 'gone' | 'goodness' | 'shower'
+IN -> 'with' | 'of' | 'in' | 'if'
+RP -> 'out'
+VBG -> 'everything' | 'playing' | 'is' | 'crying' | 'running'
+VBN -> 'born'
+VBZ -> 'is' | 'am'
+CD -> '7'
+VB -> 'know' | 'hate' | 'go' | 'like' | 'take' | 'tell'
+JJ -> 'terrible'
+JJS -> 'worst'
+VBM -> 'spilled'
+TO -> 'to'
+MD -> 'can'

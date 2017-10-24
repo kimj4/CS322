@@ -18,7 +18,7 @@ Everything is the worst.
 Sometimes I feel like I was born with a leak.
 Any goodness I started with just slowly spilled out of me.
 Now it is all gone.
-You didn’t know me .
+You didn’t know me.
 Then you fell in love with me.
 Now you know me.
 I need to go take a shower.
@@ -99,7 +99,8 @@ Perform any post-processing needed to clean up the final Spanish output sentence
 
 Part 3
 
-Calculate the BLEU score of your system by comparing your directly translated Spanish sentences to the following reference translations (Google Translate).
+Calculate the BLEU score of your system by comparing your directly translated
+Spanish sentences to the following reference translations (Google Translate).
 Odio esto.
 Correr es terrible.
 Todo es lo peor.
@@ -112,15 +113,23 @@ Ahora me conoces.
 Necesito ir a bańarme.
 No puedo decir si estoy llorando.
 Acabo de pasar 7 horas jugando con las fuentes.
-Per our discussion in class, if BLEU-1,-2,-3 or -4 has a zero probability, simply omit from the final calculation. No need to consider a brevity penalty.
+Per our discussion in class, if BLEU-1,-2,-3 or -4 has a zero probability,
+simply omit from the final calculation. No need to consider a brevity penalty.
 
 Submission
 
-Submit the following via Moodle by 11:55 PM on Monday, October 23, 2017 (submission will be open until Tuesday, October 24, 2017 by 11:55 PM for 50% credit):
+Submit the following via Moodle by 11:55 PM on Monday, October 23, 2017
+(submission will be open until Tuesday, October 24, 2017 by 11:55 PM for 50% credit):
 
-(1) Your system source code which should rely on your grammar to generate the required Spanish sentences and perform the BLEU comparison calculation.
+(1) Your system source code which should rely on your grammar to generate the
+required Spanish sentences and perform the BLEU comparison calculation.
 
-(2) A system write-up that contains (a) a copy of your CFG's rules and initial lexicon, (b) commentary on your CFG's ability to generalize to unseen data (or issues with over generation) - provide examples, and (c) the results of and commentary on BLEU performance, ideas for improvement, matching or contradiction of expectations, etc.
+(2) A system write-up that contains
+    (a) a copy of your CFG's rules and initial lexicon,
+    (b) commentary on your CFG's ability to generalize to unseen data (or issues
+        with over generation) - provide examples, and
+    (c) the results of and commentary on BLEU performance, ideas for improvement,
+        matching or contradiction of expectations, etc.
 
 As indicated in the syllabus, if you so choose, you can work with one person. If you collaborate in this way, submit only one version of the code and write up (indicating the collaborating pairing in the comments of the code).
 

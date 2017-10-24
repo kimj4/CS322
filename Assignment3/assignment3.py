@@ -1,3 +1,11 @@
+# assignment3.py
+# Ju Yun Kim and Emma Posega Rappleye
+# Carleton College
+# CS 322: Natural Language Processing
+#
+# solution file for assignment3, examining CFGs and basic machine translation
+
+import math
 import nltk.data
 from nltk.tokenize.punkt import PunktSentenceTokenizer, PunktParameters
 import pprint
@@ -12,6 +20,8 @@ from nltk.tokenize import wordpunct_tokenize
 from nltk import pos_tag
 from nltk import CFG
 from nltk.parse.generate import generate, demo_grammar
+
+import bleu
 
 
 nltk.download('averaged_perceptron_tagger')
@@ -55,7 +65,7 @@ transductionLexicon = {
     'running':'corriendo',
     'hours':'horas',
     'fonts':'fuentes',
-    'I':'yo',
+    'i':'yo',
     'me':'yo',
     'it':'ello',
     'you':'usted',
@@ -117,7 +127,7 @@ def wordForWordTranslation(sentence):
     words = sentence.strip()[:-1].split(' ')
     translation = []
     for word in words:
-        if word == 'I':
+        if word == 'i':
             translation.append(transductionLexicon[word])
         elif word == 'didn’t':
             translation.append(transductionLexicon['did'])
@@ -132,6 +142,15 @@ def wordForWordTranslation(sentence):
     transSentence = ' '.join(translation)
     transSentence += '.'
     return transSentence
+
+def translateTree(tree):
+    treecpy = copy.deepcopy(tree)
+
+    for leafPos in treecpy.treepositions('leaves'):
+        if treecpy[leafPos] in transductionLexicon:
+            treecpy[leafPos] = transductionLexicon[treecpy[leafPos]]
+
+    print(treecpy)
 
 
 
@@ -158,27 +177,9 @@ def main():
     for wordList in sentenceWords:
         print(str(pos_tag(wordList)) + '\n' )
 
-    # with open('g.txt', 'w') as f:
-    #     for wordList in sentenceWords:
-    #         pos_list = pos_tag(wordList)
-    #         to_write = ''
-    #         for p in pos_list:
-    #             to_write = to_write + p[1] + ' '
-    #         to_write += '\n'
-    #         f.write(to_write)
-
     testPyStatParser()
 
-    translatedSentences = []
-    with open('translations.txt', 'w') as f:
-        for sentence in sentences:
-            # print(wordForWordTranslation(sentence))
-            f.write(wordForWordTranslation(sentence) + '\n')
-            translatedSentences.append(wordForWordTranslation(sentence))
 
-    for i in range(len(translatedSentences)):
-        BLEUscore = nltk.translate.bleu_score.sentence_bleu([translationGoldStandard[i].split(' ')], translatedSentences[i].split(' '))
-        print(BLEUscore)
 
 
     grammar = nltk.CFG.fromstring("""
@@ -228,7 +229,7 @@ def main():
         NN -> 'leak' | 'love' | 'gone' | 'goodness' | 'shower'
         IN -> 'with' | 'of' | 'in' | 'if'
         RP -> 'out'
-        VBG -> 'everything' | 'playing' | 'is' | 'crying' | 'running'
+        VBG -> 'is' | 'playing' | 'crying' | 'running' | 'everything'
         VBN -> 'born'
         VBZ -> 'is' | 'am'
         CD -> '7'
@@ -240,47 +241,58 @@ def main():
         MD -> 'can'
     """)
 
+    translatedSentences = []
     parser = nltk.ChartParser(grammar)
     for sentence in sentences:
-        # sList = []
-        # words = sentence[:-1].split(' ')
-        # for word in words:
-        #     if word == 'I':
-        #         sList.append('I')
-        #     else:
-        #
 
         print('\n')
         print(sentence)
         for tree in parser.parse(sentence[:-1].lower().split(' ')):
+            # translateTree(str(tree))
             print(tree)
+            translateTree(tree)
+            translatedSentence = ''
+            for word in sentence[:-1].lower().split(' '):
+                if word in transductionLexicon:
+                    translatedSentence = translatedSentence + ' ' + transductionLexicon[word]
+            # translatedSentence + '.'
+            translatedSentence = translatedSentence[1].upper() + translatedSentence[2:len(translatedSentence)]
+            translatedSentence += '.'
+        print(translatedSentence)
+        translatedSentences.append(translatedSentence)
         print('\n')
 
 
-    # viterbi_parser = nltk.ViterbiParser(grammar)
-    # parser = nltk.ChartParser(grammar)
-    # for tree in parser.parse(['I', 'need', 'to', 'go', 'take', 'a', 'shower']):
-    # #     print(tree)
-    # for p in grammar.productions():
-    #     print(p)
-    #     for sentence in generate(grammar, depth=5, start=str(p)):
-    #         print(' '.join(sentence))
+    allBLEUscores = []
+    for i in range(len(translatedSentences)):
+        print('-------------------------------------------------------')
+        print("Google translation: " + translationGoldStandard[i])
+        print("Direct translation: " + translatedSentences[i])
+
+
+        ref = translationGoldStandard[i][:-1].lower().split(' ')
+        hyp = translatedSentences[i][:-1].lower().split(' ')
+        BLEUscore = nltk.translate.bleu_score.sentence_bleu([ref], hyp)
+        print(BLEUscore)
+        allBLEUscores.append(BLEUscore)
+        print('-------------------------------------------------------')
+        print('\n')
+
+    total = sum(allBLEUscores) / len(allBLEUscores)
+    print('\nFull corpus BLEU score:')
+    print(total)
+    print('\n')
+
     loweredSentences = []
     for s in sentences:
         loweredSentences.append(s.lower()[:-1])
 
     print(loweredSentences)
 
-    counter = 0
-    for sentence in generate(grammar, depth=10):
-        counter += 1
-        if ' '.join(sentence) in loweredSentences:
-            print(sentence)
-        if counter % 10000 == 0:
-            print(counter)
-
-
-
+    #### for generating sentences from the grammar
+    # depth = 10
+    # for sentence in generate(grammar, depth=depth):
+    #     print(' '.join(sentence))
 
 
 

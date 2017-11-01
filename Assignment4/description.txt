@@ -11,7 +11,13 @@ expectations for synonyms, antonyms or other observed semantic relations
 
 Part 2
 
-Randomly select 25 sentence pairs from 'Assignment_4_Input.txt' and return the cosine similarity between each pair of sentences. Based on the distribution of scores, analyze what may be driving similarity (or not) between sentences. Your code will have to create word count vectors based on the two sentences (rather than precomputed vectors).
+Randomly select 25 sentence pairs from 'Assignment_4_Input.txt' and return the
+cosine similarity between each pair of sentences. Based on the distribution of
+scores, analyze what may be driving similarity (or not) between sentences. Your
+code will have to create word count vectors based on the two sentences (rather
+than precomputed vectors).
+
+
 Submission
 
 Submit the following via Moodle by 11:55 PM on Friday, November 3, 2017 (submission will be open until Saturday, November 4, 2017 by 11:55 PM for 50% credit):

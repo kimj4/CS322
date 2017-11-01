@@ -35,41 +35,52 @@ def findCosSimilarity(word1, word2, wordVectorDict):
 
 def main():
     # gloveFileName = '/Accounts/posegae/glove.6B/glove.6B.50d.txt'
-    gloveFileName = 'data/glove.6B.50d.txt'
+    gloveFileName = 'data/glove.6B.300d.txt'
     numLines = sum(1 for line in open(gloveFileName))
-    linesList = [] # contains line number
-    while (len(linesList) < 25):
-        randLine = randint(0, numLines)
-        if (not (randLine in linesList)):
-            linesList.append(randLine)
+    linesPairList = [] # contains line number
+    while (len(linesPairList) < 25):
+        line1 = randint(0, numLines)
+        line2 = randint(0, numLines)
+        while (line1 == line2):
+            line1 = randint(0, numLines)
+            line2 = randint(0, numLines)
+        randLinePair = (line1, line2)
+        if (not (randLinePair in linesPairList)):
+            linesPairList.append(randLinePair)
 
     #line = linecache.getline('glove.6B/glove.6B.50d.txt', 500)
     #print(line)
 
 
     # make a list of words (the 25 that were randomly chosen)
-    wordsList = []
-    for line in linesList:
-        wordsList.append(linecache.getline(gloveFileName, line).split()[0])
-
-
-    pairsList = makeAllPairs(wordsList)
+    wordsPairList = []
+    for linePair in linesPairList:
+        word1 = linecache.getline(gloveFileName, linePair[0]).split()[0]
+        word2 = linecache.getline(gloveFileName, linePair[1]).split()[0]
+        wordsPairList.append((word1, word2))
 
     # gets the vecs for all words in the list
     wordVectorDict = {}
-    for line in linesList:
-        wordVec = linecache.getline(gloveFileName, line)
-        # print(wordVec.split()[0])
+    for linePair in linesPairList:
+        # first word in the pair
+        wordVec = linecache.getline(gloveFileName, linePair[0])
         wordVectorDict[wordVec.split()[0]] = wordVec.split()[1:]
+
+        # second word in the pair
+        wordVec = linecache.getline(gloveFileName, linePair[1])
+        wordVectorDict[wordVec.split()[0]] = wordVec.split()[1:]
+
+
 
     # get the cosine similarity between all pairs
     cosineSimilarities = [] # a list of 2-tuple where [0] is word pair and [1] is the cosine similarity
-    for pair in pairsList:
+    for pair in wordsPairList:
         cosineSimilarities.append((pair, findCosSimilarity(pair[0], pair[1], wordVectorDict)))
         # ((word1, word2), cosSimilarity between them)
 
-    # for cs in cosineSimilarities:
-    #     print(str(cs[0]) + ': ' + str(cs[1]))
+    sortedCosineSimilarities = sorted(cosineSimilarities, key=lambda tup: tup[1])
+    for cs in sortedCosineSimilarities:
+        print(str(cs[0]) + ': ' + str(cs[1]))
 
 
 if __name__ == '__main__':

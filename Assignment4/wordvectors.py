@@ -2,102 +2,82 @@
 import linecache
 from random import *
 from math import *
-
-def makeAllPairs(linesList):
-    pairs = [] # a list of tuples
-    for i in range(0, len(linesList)):
-        for j in range(0, len(linesList)):
-            if i == j:
-                pass
-            elif i < j:
-                # pairs.append()
-                pairs.append((linesList[i], linesList[j]))
-            else:
-                pass
-    return pairs
-
-
-def findCosSimilarity(word1, word2, wordVectorDict):
-    num = 0
-    denom1 = 0
-    denom2 = 0
-    for i in range(0,300):
-        num += float(wordVectorDict[word1][i])*float(wordVectorDict[word2][i])
-        denom1 += float(wordVectorDict[word1][i])**2
-        denom2 += float(wordVectorDict[word2][i])**2
-    denom = sqrt(denom1) *  sqrt(denom2)
-    # print(num)
-    # print(denom)
-    cosSimilarity = num/denom
-    # print(cosSimilarity)
-    # print('between ' + word1 + ' and ' + word2)
-    return cosSimilarity
+from pprint import pprint
 
 
 def printWordCosineSimilarities(filepath):
+    englishWords = ''
+    with open('data/english_words_list.txt', 'r') as f:
+        englishWords = f.read()
+    englishWords = englishWords.split('\n') #list of enlgish words
+    onlyUseEnglishWords = True
+
+
+
     gloveFileName = filepath
     numLines = sum(1 for line in open(gloveFileName))
     linesPairList = [] # contains line number
-    while (len(linesPairList) < 25):
+    while (len(linesPairList) < 50):
         line1 = randint(0, numLines)
         line2 = randint(0, numLines)
         while (line1 == line2):
             line1 = randint(0, numLines)
             line2 = randint(0, numLines)
-        while (any(c.isdigit() for c in linecache.getline(gloveFileName, line1).split(' ')[0]) or any(c.isdigit() for c in linecache.getline(gloveFileName, line2).split(' ')[0])):
+
+        w1 = linecache.getline(gloveFileName, line1).split(' ')[0]
+        w2 = linecache.getline(gloveFileName, line2).split(' ')[0]
+        while (any(c.isdigit() for c in w1) or any(c.isdigit() for c in w2)):
             line1 = randint(0, numLines)
             line2 = randint(0, numLines)
             linecache.getline(gloveFileName, line1)
             linecache.getline(gloveFileName, line2)
+            w1 = linecache.getline(gloveFileName, line1).split(' ')[0]
+            w2 = linecache.getline(gloveFileName, line2).split(' ')[0]
+        while ('.' in  w1 or '.' in w2):
+            line1 = randint(0, numLines)
+            line2 = randint(0, numLines)
+            linecache.getline(gloveFileName, line1)
+            linecache.getline(gloveFileName, line2)
+            w1 = linecache.getline(gloveFileName, line1).split(' ')[0]
+            w2 = linecache.getline(gloveFileName, line2).split(' ')[0]
+        if onlyUseEnglishWords:
+            while(w1 not in englishWords or w2 not in englishWords):
+                line1 = randint(0, numLines)
+                line2 = randint(0, numLines)
+                linecache.getline(gloveFileName, line1)
+                linecache.getline(gloveFileName, line2)
+                w1 = linecache.getline(gloveFileName, line1).split(' ')[0]
+                w2 = linecache.getline(gloveFileName, line2).split(' ')[0]
 
         randLinePair = (line1, line2)
         if (not (randLinePair in linesPairList)):
             linesPairList.append(randLinePair)
 
-    #line = linecache.getline('glove.6B/glove.6B.50d.txt', 500)
-    #print(line)
-
-
     # make a list of words (the 25 that were randomly chosen)
+    # This is a list of 2-tuples of strings
     wordsPairList = []
     for linePair in linesPairList:
-        word1 = linecache.getline(gloveFileName, linePair[0]).split()[0]
-        word2 = linecache.getline(gloveFileName, linePair[1]).split()[0]
-        wordsPairList.append((word1, word2))
-
-    # gets the vecs for all words in the list
-    wordVectorDict = {}
-    for linePair in linesPairList:
-        # first word in the pair
-        wordVec = linecache.getline(gloveFileName, linePair[0])
-        wordVectorDict[wordVec.split()[0]] = wordVec.split()[1:]
-
-        # second word in the pair
-        wordVec = linecache.getline(gloveFileName, linePair[1])
-        wordVectorDict[wordVec.split()[0]] = wordVec.split()[1:]
+        line1 = linecache.getline(gloveFileName, linePair[0])
+        word1 = line1.split()[0]
+        vec1 = [float(a) for a in line1.split()[1:]]
 
 
+        line2 = linecache.getline(gloveFileName, linePair[1])
+        word2 = line2.split()[0]
+        vec2 = [float(a) for a in line2.split()[1:]]
+        wordsPairList.append( ((word1, vec1),  (word2, vec2)) )
 
     # get the cosine similarity between all pairs
-    cosineSimilarities = [] # a list of 2-tuple where [0] is word pair and [1] is the cosine similarity
+    cosineSimilarities = [] # [((w1, w2), cs12), ...]
     for pair in wordsPairList:
-        cosineSimilarities.append((pair, findCosSimilarity(pair[0], pair[1], wordVectorDict)))
-        # ((word1, word2), cosSimilarity between them)
+        cs = findCosineSimilarity(pair[0][1], pair[1][1])
+        cosineSimilarities.append( ((pair[0][0], pair[1][0]), cs) )
 
     sortedCosineSimilarities = sorted(cosineSimilarities, key=lambda tup: tup[1])
 
-    # TODO REVOEW
-    if sortedCosineSimilarities[-1][1] < .4:
-        main()
-    else:
-
-
-
-        for cs in sortedCosineSimilarities:
-            print('word 1: ' + cs[0][0])
-            print('word 2: ' + cs[0][1])
-            print('cosine similarity: ' + str(cs[1]))
-            print('\n')
+    for cs in sortedCosineSimilarities:
+        line_new = '{:<25}  {:<20}  {:<20}'.format(cs[1], cs[0][0], cs[0][1],)
+        print(line_new)
 
 def getSentencePairVectors(sentencePair):
     # input sentencePair is a tuple of sentences
@@ -153,17 +133,20 @@ def getSentencePairVectors(sentencePair):
     return (s1Vector, s2Vector)
 
 
-def findSentenceCosineSimilarity(s1Vector, s2Vector):
-     num = 0
-     denom1 = 0
-     denom2 = 0
-     for i in range(len(s1Vector)):
-         num += float(s1Vector[i]) * float(s2Vector[i])
-         denom1 += float(s1Vector[i]) ** 2
-         denom2 += float(s2Vector[i]) ** 2
-     denom = sqrt(denom1) * sqrt(denom2)
-     cosSimilarity = num / denom
-     return cosSimilarity
+def findCosineSimilarity(s1Vector, s2Vector):
+    '''
+    finds cosine similarity between two vectors
+    '''
+    num = 0
+    denom1 = 0
+    denom2 = 0
+    for i in range(len(s1Vector)):
+        num += float(s1Vector[i]) * float(s2Vector[i])
+        denom1 += float(s1Vector[i]) ** 2
+        denom2 += float(s2Vector[i]) ** 2
+    denom = sqrt(denom1) * sqrt(denom2)
+    cosSimilarity = num / denom
+    return cosSimilarity
 
 
 def printSentenceCosineSimilarities(filename):
@@ -192,7 +175,7 @@ def printSentenceCosineSimilarities(filename):
     cosineSimilarities = []
     for sentencePair in sentencesPairList:
         sentencePairVectors = getSentencePairVectors(sentencePair)
-        cosineSimilarities.append((sentencePair, findSentenceCosineSimilarity(sentencePairVectors[0], sentencePairVectors[1])))
+        cosineSimilarities.append((sentencePair, findCosineSimilarity(sentencePairVectors[0], sentencePairVectors[1])))
 
     sortedCosineSimilarities = sorted(cosineSimilarities, key=lambda tup: tup[1])
 

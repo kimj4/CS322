@@ -21,11 +21,11 @@ def findCosSimilarity(word1, word2, wordVectorDict):
     num = 0
     denom1 = 0
     denom2 = 0
-    for i in range(0,50):
+    for i in range(0,300):
         num += float(wordVectorDict[word1][i])*float(wordVectorDict[word2][i])
         denom1 += float(wordVectorDict[word1][i])**2
         denom2 += float(wordVectorDict[word2][i])**2
-    denom = sqrt(denom1) + sqrt(denom2)
+    denom = sqrt(denom1) *  sqrt(denom2)
     # print(num)
     # print(denom)
     cosSimilarity = num/denom
@@ -34,7 +34,7 @@ def findCosSimilarity(word1, word2, wordVectorDict):
     return cosSimilarity
 
 
-def doPart1(filepath):
+def printWordCosineSimilarities(filepath):
     gloveFileName = filepath
     numLines = sum(1 for line in open(gloveFileName))
     linesPairList = [] # contains line number
@@ -44,6 +44,12 @@ def doPart1(filepath):
         while (line1 == line2):
             line1 = randint(0, numLines)
             line2 = randint(0, numLines)
+        while (any(c.isdigit() for c in linecache.getline(gloveFileName, line1).split(' ')[0]) or any(c.isdigit() for c in linecache.getline(gloveFileName, line2).split(' ')[0])):
+            line1 = randint(0, numLines)
+            line2 = randint(0, numLines)
+            linecache.getline(gloveFileName, line1)
+            linecache.getline(gloveFileName, line2)
+
         randLinePair = (line1, line2)
         if (not (randLinePair in linesPairList)):
             linesPairList.append(randLinePair)
@@ -79,11 +85,19 @@ def doPart1(filepath):
         # ((word1, word2), cosSimilarity between them)
 
     sortedCosineSimilarities = sorted(cosineSimilarities, key=lambda tup: tup[1])
-    for cs in sortedCosineSimilarities:
-        print('word 1: ' + cs[0][0])
-        print('word 2: ' + cs[0][1])
-        print('cosine similarity: ' + str(cs[1]))
-        print('\n')
+
+    # TODO REVOEW
+    if sortedCosineSimilarities[-1][1] < .4:
+        main()
+    else:
+
+
+
+        for cs in sortedCosineSimilarities:
+            print('word 1: ' + cs[0][0])
+            print('word 2: ' + cs[0][1])
+            print('cosine similarity: ' + str(cs[1]))
+            print('\n')
 
 def getSentencePairVectors(sentencePair):
     # input sentencePair is a tuple of sentences
@@ -147,12 +161,12 @@ def findSentenceCosineSimilarity(s1Vector, s2Vector):
          num += float(s1Vector[i]) * float(s2Vector[i])
          denom1 += float(s1Vector[i]) ** 2
          denom2 += float(s2Vector[i]) ** 2
-     denom = sqrt(denom1) + sqrt(denom2)
+     denom = sqrt(denom1) * sqrt(denom2)
      cosSimilarity = num / denom
      return cosSimilarity
 
 
-def doPart2(filename):
+def printSentenceCosineSimilarities(filename):
     numLines = sum(1 for line in open(filename))
     linesPairList = [] # contains line number
     while (len(linesPairList) < 25):
@@ -161,6 +175,10 @@ def doPart2(filename):
         while (line1 == line2):
             line1 = randint(0, numLines)
             line2 = randint(0, numLines)
+            while (len(line1) == 0 or len(line2) == 0):
+                print('here')
+                line1 = randint(0, numLines)
+                line2 = randint(0, numLines)
         randLinePair = (line1, line2)
         if (not (randLinePair in linesPairList)):
             linesPairList.append(randLinePair)
@@ -176,7 +194,9 @@ def doPart2(filename):
         sentencePairVectors = getSentencePairVectors(sentencePair)
         cosineSimilarities.append((sentencePair, findSentenceCosineSimilarity(sentencePairVectors[0], sentencePairVectors[1])))
 
-    for item in cosineSimilarities:
+    sortedCosineSimilarities = sorted(cosineSimilarities, key=lambda tup: tup[1])
+
+    for item in sortedCosineSimilarities:
         print('sentence 1: ' + item[0][0]) #s1
         print('sentence 2: ' + item[0][1]) #s2
         print('cosine similarity: ' + str(item[1])) #similarity
@@ -186,10 +206,10 @@ def doPart2(filename):
 def main():
     # gloveFileName = '/Accounts/posegae/glove.6B/glove.6B.50d.txt'
     part1FileName = 'data/glove.6B.300d.txt'
-    doPart1(part1FileName)
+    printWordCosineSimilarities(part1FileName)
 
-    part2FileName = 'data/Assignment_4_Input.txt'
-    doPart2(part2FileName)
+    # part2FileName = 'data/Assignment_4_Input.txt'
+    # printSentenceCosineSimilarities(part2FileName)
 
 
 if __name__ == '__main__':

@@ -3,7 +3,7 @@ import linecache
 from random import *
 from math import *
 from pprint import pprint
-
+NUM_PAIRS = 25
 
 def printWordCosineSimilarities(filepath):
     englishWords = ''
@@ -17,7 +17,7 @@ def printWordCosineSimilarities(filepath):
     gloveFileName = filepath
     numLines = sum(1 for line in open(gloveFileName))
     linesPairList = [] # contains line number
-    while (len(linesPairList) < 50):
+    while (len(linesPairList) < NUM_PAIRS):
         line1 = randint(0, numLines)
         line2 = randint(0, numLines)
         while (line1 == line2):
@@ -76,7 +76,8 @@ def printWordCosineSimilarities(filepath):
     sortedCosineSimilarities = sorted(cosineSimilarities, key=lambda tup: tup[1])
 
     for cs in sortedCosineSimilarities:
-        line_new = '{:<25}  {:<20}  {:<20}'.format(cs[1], cs[0][0], cs[0][1],)
+        # line_new = '{:<25}  {:<20}  {:<20}'.format(cs[1], cs[0][0], cs[0][1],)
+        line_new = str(cs[1]) + '|' + cs[0][0] + ' / ' + cs[0][1]
         print(line_new)
 
 def getSentencePairVectors(sentencePair):
@@ -116,19 +117,12 @@ def getSentencePairVectors(sentencePair):
         else:
             wordCountDict[word][1] += 1
 
-
-    # extract s1 and s2 vectors from the dicts
     wordCounts = list(wordCountDict.items())
     s1Vector = []
     s2Vector = []
     for wordCount in wordCounts:
         s1Vector.append(wordCount[1][0])
         s2Vector.append(wordCount[1][1])
-
-    #
-    # print('\n' + str(list(wordCountDict.items())) + '\n' )
-    # print(s1Vector)
-    # print(s2Vector)
 
     return (s1Vector, s2Vector)
 
@@ -158,10 +152,10 @@ def printSentenceCosineSimilarities(filename):
         while (line1 == line2):
             line1 = randint(0, numLines)
             line2 = randint(0, numLines)
-            while (len(line1) == 0 or len(line2) == 0):
-                print('here')
-                line1 = randint(0, numLines)
-                line2 = randint(0, numLines)
+        while (len(linecache.getline(filename, line1)) == 0 or len(linecache.getline(filename, line2)) == 0):
+            print('here')
+            line1 = randint(0, numLines)
+            line2 = randint(0, numLines)
         randLinePair = (line1, line2)
         if (not (randLinePair in linesPairList)):
             linesPairList.append(randLinePair)
@@ -183,16 +177,14 @@ def printSentenceCosineSimilarities(filename):
         print('sentence 1: ' + item[0][0]) #s1
         print('sentence 2: ' + item[0][1]) #s2
         print('cosine similarity: ' + str(item[1])) #similarity
-        print('\n')
 
 
 def main():
-    # gloveFileName = '/Accounts/posegae/glove.6B/glove.6B.50d.txt'
     part1FileName = 'data/glove.6B.300d.txt'
     printWordCosineSimilarities(part1FileName)
 
-    # part2FileName = 'data/Assignment_4_Input.txt'
-    # printSentenceCosineSimilarities(part2FileName)
+    part2FileName = 'data/Assignment_4_Input.txt'
+    printSentenceCosineSimilarities(part2FileName)
 
 
 if __name__ == '__main__':
